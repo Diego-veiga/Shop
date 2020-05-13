@@ -46,7 +46,7 @@ namespace Shop.Controllers
                 return Ok(model);
             }catch(Exception e)
             {
-                return BadRequest(new { message = " Infelizmente Não foi possvel cadastrar a categoria " });
+                return BadRequest(new { message = "Não foi possvel cadastrar a categoria " });
             }
 
         }
