@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace Shop.Controllers
     {
         [Route("")]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>> GetProducts([FromServices]DataContext context)
         {
 
@@ -25,6 +27,7 @@ namespace Shop.Controllers
         }
         [HttpGet]
         [Route("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>>ProductId( int id, [FromServices]DataContext context)
         {
             var Product = await context.Product.Include(x => x.Category).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -32,6 +35,7 @@ namespace Shop.Controllers
         }
         [HttpGet]
         [Route("categories/{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>>ProductCategory([FromServices]DataContext context, int id)
         {
             var product = context.Product.Include(x => x.Category).AsNoTracking().Where(x => x.CategoryId == id).ToListAsync();
@@ -39,11 +43,12 @@ namespace Shop.Controllers
         }
         [Route("")]
         [HttpPost]
+        [Authorize(Roles ="emploe")]
         public async Task<ActionResult>CadProduct([FromBody] Product model, [FromServices]DataContext context)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Produto informado inválido" });
+                return BadRequest(model);
 
             }
             try

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
 using Shop.Model;
@@ -14,6 +15,7 @@ namespace Shop.Controllers
 
         [HttpGet]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> Get([FromServices]DataContext context)
         {
            var categorias = await context.Category.AsNoTracking().ToListAsync();
@@ -23,6 +25,8 @@ namespace Shop.Controllers
         }
         [HttpGet]
         [Route("{id:int}")]
+        [AllowAnonymous]
+        
         public async Task<ActionResult<Category>> GetPorId(int id,[FromServices]DataContext context)
         {
             var categoria = await context.Category.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -30,6 +34,7 @@ namespace Shop.Controllers
         }
         [HttpPost]
         [Route("")]
+        [Authorize(Roles ="emploe")]
         public async Task<ActionResult<Category>> Post([FromBody] Category model, [FromServices]DataContext context)
         {
             if (!ModelState.IsValid)
@@ -53,6 +58,7 @@ namespace Shop.Controllers
         }
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles ="emploe")]
         public async Task<ActionResult<Category>> Put(int id, [FromBody]Category model, [FromServices] DataContext context)
         {
             if (id != model.Id)
@@ -81,6 +87,8 @@ namespace Shop.Controllers
         }
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles ="manager")]
+
         public async Task<ActionResult<Category>> Deleta([FromServices]DataContext context, int id)
         {
             var categoria = await context.Category.SingleOrDefaultAsync(x => x.Id == id);
