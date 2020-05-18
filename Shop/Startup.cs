@@ -58,8 +58,8 @@ namespace Shop
                 };
 
             });
-            services.AddDbContext<DataContext>(op => op.UseInMemoryDatabase("DataBase"));
-           // services.AddDbContext<DataContext>(op => op.UseSqlServer(Configuration.GetConnectionString("connectionStrngs")));
+            //services.AddDbContext<DataContext>(op => op.UseInMemoryDatabase("DataBase"));
+           services.AddDbContext<DataContext>(op => op.UseSqlServer(Configuration.GetConnectionString("connectionStrngs")));
            // services.AddScoped<DataContext, DataContext>();
             services.AddSwaggerGen(c =>
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api info", Version = "1.0" }));
@@ -71,10 +71,10 @@ namespace Shop
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+           // if (env.IsDevelopment())
+            
                 app.UseDeveloperExceptionPage();
-            }
+            
 
             app.UseHttpsRedirection();
             app.UseSwagger();
