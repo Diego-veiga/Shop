@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Shop.Data;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,8 @@ namespace Shop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
+            services.AddCors();
             services.AddResponseCompression(op =>
             {
                 op.Providers.Add<GzipCompressionProvider>();
@@ -56,9 +58,11 @@ namespace Shop
                 };
 
             });
-            //services.AddDbContext<DataContext>(op => op.UseInMemoryDatabase("DataBase"));
-            services.AddDbContext<DataContext>(op => op.UseSqlServer(Configuration.GetConnectionString("connectionStrngs")));
-            services.AddScoped<DataContext, DataContext>();
+            services.AddDbContext<DataContext>(op => op.UseInMemoryDatabase("DataBase"));
+           // services.AddDbContext<DataContext>(op => op.UseSqlServer(Configuration.GetConnectionString("connectionStrngs")));
+           // services.AddScoped<DataContext, DataContext>();
+            services.AddSwaggerGen(c =>
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api info", Version = "1.0" }));
 
 
 
@@ -73,9 +77,18 @@ namespace Shop
             }
 
             app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c=>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shop Api V1");
+            });
 
             app.UseRouting();
-            
+            app.UseCors(X => X.
+            AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
 
             app.UseAuthentication();
             app.UseAuthorization();

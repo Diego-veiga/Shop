@@ -46,6 +46,7 @@ namespace Shop.Controllers
             {
                 BadRequest(new { message = "Não foi possivel cadastrar  o usuario " });
             }
+            model.Password = "";
             return Ok(model);
 
         }
@@ -89,6 +90,7 @@ namespace Shop.Controllers
                 
             }
             var token = TokenService.GenerateToken(user);
+            user.Password = "";
             return new
             {
                 user = user,
